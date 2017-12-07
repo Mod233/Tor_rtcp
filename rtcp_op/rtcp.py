@@ -127,7 +127,7 @@ def _connect(host, domain, num):
         conn.set_proxy(socks.SOCKS4, host, 9011, True)
         # will Tor deal with multi process?
         try:
-            conn.connect((domain, 9011))
+            conn.connect((domain, 80))
         except Exception, e:
             print ('can not connect %s:%s!' % (host, domain))
             not_connet_time += 1
@@ -152,8 +152,8 @@ if __name__ == '__main__':
         if len(sl) == 2 and (sl[0] == 'l' or sl[0] == 'L'):  # l:port
             t = threading.Thread(target=_server, args=(int(sl[1]), i))
             tlist.append(t)
-        elif len(sl) == 3 and (sl[0] == 'c' or sl[0] == 'C'):  # c:host:port
-            t = threading.Thread(target=_connect, args=(sl[1], int(sl[2]), i))
+        elif len(sl) == 3 and (sl[0] == 'c' or sl[0] == 'C'):  # c:host:domain_onion
+            t = threading.Thread(target=_connect, args=(sl[1], (sl[2]), i))
             tlist.append(t)
         else:
             _usage()
