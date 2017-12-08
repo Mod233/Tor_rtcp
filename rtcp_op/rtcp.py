@@ -23,7 +23,7 @@ import sys
 import threading
 import time
 import socks
-from socket import socket, error, AF_INET, SOCK_STREAM
+from socket import socket, error, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 
 streams = [None, None]  # 存放需要进行数据转发的两个数据流（都是SocketObj对象）
 debug = 1  # 调试状态 0 or 1
@@ -96,8 +96,8 @@ def _server(port, num):
     '''
     处理服务情况,num为流编号（第0号还是第1号）
     '''
-    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    srv = socket(AF_INET, SOCK_STREAM)
+    srv.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     srv.bind(('0.0.0.0', port))
     srv.listen(1)
     while True:
@@ -134,7 +134,7 @@ def _connect(host, domain, num):
             time.sleep(wait_time)
             continue
 
-        print "connected to %s:%i" % (host, domain)
+        print "connected to %s:%s" % (host, domain)
         streams[num] = conn  #放入本端流对象
         s2 = _get_another_stream(num) #获取另一端流对象
         _xstream(num, conn, s2)
